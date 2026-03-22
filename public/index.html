@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LARPify — Live Like You Mean It</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#3B82F6;--blue2:#60A5FA;--blue3:#1D4ED8;
+  --glow:rgba(59,130,246,.35);
+  --bg:#050812;--glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.08);
+  --gb:rgba(255,255,255,.1);--gb2:rgba(59,130,246,.4);
+  --white:#f0f4ff;--muted:rgba(180,200,255,.5);--muted2:rgba(180,200,255,.75);
+  --green:#22C55E;--gold:#F59E0B;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;overflow-x:hidden}
+#cbg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bgo{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 60%,rgba(29,78,216,.18) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 30%,rgba(59,130,246,.12) 0%,transparent 60%),
+    linear-gradient(to bottom,rgba(5,8,18,.15) 0%,rgba(5,8,18,.6) 60%,rgba(5,8,18,.97) 100%)}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:200;display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 3rem;background:rgba(5,8,18,.75);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb)}
+.logo{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:3px;color:var(--white);text-decoration:none}
+.logo .ac{color:var(--blue2)}
+.navlinks{display:flex;gap:2rem;align-items:center;list-style:none}
+.navlinks a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;font-weight:500;transition:color .2s;cursor:pointer}
+.navlinks a:hover{color:var(--white)}
+.ncta{background:var(--blue)!important;color:var(--white)!important;padding:.45rem 1.2rem;
+  border-radius:6px;font-weight:600!important;box-shadow:0 0 18px var(--glow)}
+
+/* BTNS */
+.bblu{background:var(--blue);color:var(--white);padding:.85rem 2rem;font-weight:600;font-size:.9rem;
+  border:none;cursor:pointer;border-radius:8px;text-decoration:none;transition:all .2s;
+  display:inline-flex;align-items:center;gap:.4rem;box-shadow:0 0 24px var(--glow);font-family:'Outfit',sans-serif}
+.bblu:hover{background:var(--blue2);transform:translateY(-2px)}
+.bgls{background:var(--glass2);color:var(--white);padding:.85rem 2rem;font-weight:500;font-size:.9rem;
+  border:1px solid var(--gb);cursor:pointer;border-radius:8px;text-decoration:none;transition:all .2s;
+  display:inline-flex;align-items:center;gap:.4rem;backdrop-filter:blur(10px);font-family:'Outfit',sans-serif}
+.bgls:hover{border-color:var(--blue2);background:rgba(59,130,246,.1)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:7rem 2rem 3rem;position:relative;z-index:10}
+.hpill{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;
+  background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);border-radius:999px;
+  font-size:.7rem;font-family:'Space Mono',monospace;letter-spacing:2px;color:var(--blue2);
+  text-transform:uppercase;margin-bottom:2rem;animation:fup .6s ease both}
+.pdot{width:6px;height:6px;background:var(--blue2);border-radius:50%;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.htitle{font-family:'Bebas Neue',cursive;font-size:clamp(4rem,12vw,9.5rem);line-height:.9;
+  letter-spacing:2px;color:var(--white);animation:fup .7s .1s ease both}
+.htitle .bl{color:var(--blue2)}
+.htitle .ol{-webkit-text-stroke:2px rgba(96,165,250,.55);color:transparent}
+.hsub{font-size:1.05rem;color:var(--muted2);max-width:500px;line-height:1.75;
+  margin:1.5rem auto 2.5rem;font-weight:300;animation:fup .7s .2s ease both}
+.hbtns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;animation:fup .7s .3s ease both}
+.hnote{margin-top:1.5rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);
+  letter-spacing:2px;animation:fup .7s .4s ease both}
+.hnote .hi{color:var(--blue2)}
+/* CITY CHIPS — in normal flow below buttons, no overlap */
+.citychips-row{padding:2rem 1rem 0;display:flex;flex-direction:column;align-items:center;gap:.7rem;animation:fup .7s .5s ease both;width:100%}
+.citychips-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.citychips{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.cc{padding:.35rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:999px;font-size:.7rem;color:var(--muted2);letter-spacing:1px;
+  font-family:'Space Mono',monospace;cursor:pointer;transition:all .25s;
+  display:inline-flex;align-items:center;gap:.35rem}
+.cc:hover{border-color:var(--blue2);color:var(--blue2);background:rgba(59,130,246,.1);transform:translateY(-2px)}
+.cc.active-city{border-color:var(--blue);color:var(--blue2);background:rgba(59,130,246,.15)}
+/* CITY POPUP */
+.city-popup-backdrop{display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(5,8,18,.85);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:1.5rem}
+.city-popup-backdrop.op{display:flex}
+.city-popup{background:rgba(10,16,35,.98);border:1px solid var(--gb2);border-radius:20px;
+  max-width:760px;width:100%;overflow:hidden;animation:fup .3s ease;position:relative;max-height:90vh;overflow-y:auto}
+.cpu-header{padding:1.5rem 1.5rem .8rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.cpu-name{font-family:'Bebas Neue',cursive;font-size:2.2rem;letter-spacing:2px;color:var(--white);line-height:1}
+.cpu-sub{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;margin-top:.3rem}
+.cpu-close{background:rgba(255,255,255,.06);border:1px solid var(--gb);color:var(--white);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.cpu-close:hover{background:rgba(59,130,246,.2);border-color:var(--blue)}
+.cpu-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.cpu-photo{aspect-ratio:4/3;background-size:cover;background-position:center;
+  position:relative;overflow:hidden;cursor:pointer}
+.cpu-photo::after{content:'';position:absolute;inset:0;background:rgba(59,130,246,.0);transition:background .2s}
+.cpu-photo:hover::after{background:rgba(59,130,246,.2)}
+.cpu-photo .cpu-use{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s}
+.cpu-photo:hover .cpu-use{opacity:1}
+.cpu-use span{background:rgba(5,8,18,.8);border:1px solid var(--gb2);color:var(--blue2);
+  font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;
+  padding:.3rem .7rem;border-radius:6px;backdrop-filter:blur(4px)}
+.cpu-footer{padding:1rem 1.5rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;border-top:1px solid var(--gb)}
+.cpu-hint{font-size:.8rem;color:var(--muted2);font-weight:300}
+.cpu-hint strong{color:var(--blue2)}
+
+/* MARQUEE */
+.mqwrap{position:relative;z-index:10;overflow:hidden;border-top:1px solid var(--gb);
+  border-bottom:1px solid var(--gb);background:rgba(5,8,18,.85);padding:.75rem 0}
+.mqtrack{display:flex;gap:2.5rem;white-space:nowrap;animation:mq 30s linear infinite;
+  font-family:'Bebas Neue',cursive;font-size:.9rem;letter-spacing:3px;color:var(--muted)}
+.mqtrack .sp{color:var(--blue);opacity:.6}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTION */
+section{padding:5rem 2rem;position:relative;z-index:10}
+.ctr{max-width:1200px;margin:0 auto}
+.slabel{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:4px;color:var(--blue2);text-transform:uppercase;margin-bottom:.8rem}
+.stitle{font-family:'Bebas Neue',cursive;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1;letter-spacing:1px;margin-bottom:.8rem}
+.ssub{color:var(--muted2);font-size:.95rem;line-height:1.75;font-weight:300;max-width:520px}
+
+/* ── PROMPT CARDS ── */
+.phdr{text-align:center;margin-bottom:2.5rem}
+.phdr .ssub{margin:0 auto}
+.pfilter{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.fbtn{padding:.38rem .95rem;background:var(--glass);border:1px solid var(--gb);color:var(--muted2);
+  font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;border-radius:999px;transition:all .2s}
+.fbtn:hover,.fbtn.act{border-color:var(--blue);color:var(--blue2);background:rgba(59,130,246,.1)}
+
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+
+/* card */
+.pcard{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;
+  transition:transform .3s,box-shadow .3s;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:flex-end}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px var(--gb2)}
+.pcimg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
+.pcard:hover .pcimg{transform:scale(1.06)}
+.pcgrad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(5,8,18,.05) 0%,rgba(5,8,18,.25) 35%,rgba(5,8,18,.96) 100%)}
+.pcbody{position:relative;z-index:2;padding:1.2rem}
+.pcbadges{display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap}
+.badge{padding:.2rem .6rem;border-radius:999px;font-family:'Space Mono',monospace;
+  font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.bblue{background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.4);color:var(--blue2)}
+.bfree{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+.bpro{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fbbf24}
+.bused{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);color:var(--blue2)}
+.pctitle{font-family:'Bebas Neue',cursive;font-size:1.5rem;letter-spacing:1px;color:var(--white);line-height:1.1;margin-bottom:.3rem}
+.pcloc{font-size:.72rem;color:var(--muted2);margin-bottom:.65rem;font-weight:300}
+.pctext{font-size:.74rem;color:rgba(180,200,255,.5);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:.9rem}
+.pcactions{display:flex;gap:.5rem}
+.copybtn{flex:1;padding:.55rem;background:var(--blue);color:var(--white);border:none;
+  border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.3rem;font-family:'Outfit',sans-serif}
+.copybtn:hover:not(:disabled){background:var(--blue2)}
+.copybtn.cpd{background:var(--green)!important}
+.copybtn.used-state{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--gb);cursor:not-allowed}
+.plocked{position:absolute;inset:0;z-index:5;background:rgba(5,8,18,.7);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;
+  opacity:0;transition:opacity .25s;border-radius:16px}
+.pcard.lk:hover .plocked{opacity:1}
+.unpill{background:var(--blue);color:var(--white);padding:.65rem 1.4rem;border-radius:8px;
+  font-weight:700;font-size:.85rem;border:none;cursor:pointer;box-shadow:0 0 30px var(--glow);
+  transition:all .2s;font-family:'Outfit',sans-serif}
+.unpill:hover{background:var(--blue2);transform:scale(1.05)}
+.unpill-sub{font-size:.65rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px}
+.seeal{text-align:center;margin-top:2rem}
+
+/* STATS */
+.statbar{border-top:1px solid var(--gb);border-bottom:1px solid var(--gb);
+  background:rgba(5,8,18,.8);backdrop-filter:blur(20px);padding:2.5rem 2rem;position:relative;z-index:10}
+.statinner{max-width:900px;margin:0 auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:2rem}
+.stat{text-align:center}
+.snum{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--blue2);letter-spacing:2px;line-height:1;text-shadow:0 0 20px var(--glow)}
+.slbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:.3rem}
+
+/* ── GENERATOR ── */
+.genwrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.genpanel{padding:2rem;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:20px}
+.glabel{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:.5rem;display:block}
+.ginput,.gtextarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--gb);
+  color:var(--white);padding:.75rem 1rem;font-size:.9rem;font-family:'Outfit',sans-serif;
+  border-radius:10px;outline:none;transition:border-color .2s,background .2s}
+.ginput::placeholder,.gtextarea::placeholder{color:var(--muted)}
+.ginput:focus,.gtextarea:focus{border-color:var(--blue);background:rgba(59,130,246,.06)}
+.gtextarea{resize:vertical;min-height:65px}
+.frow{margin-bottom:1rem}
+.schips{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.schip{padding:.6rem .3rem;background:rgba(255,255,255,.03);border:1px solid var(--gb);color:var(--muted2);
+  font-size:.72rem;font-family:'Outfit',sans-serif;font-weight:500;cursor:pointer;
+  border-radius:10px;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.schip .ci{font-size:1.15rem}
+.schip:hover{border-color:var(--blue);color:var(--white)}
+.schip.act{border-color:var(--blue);background:rgba(59,130,246,.12);color:var(--blue2)}
+
+/* PHOTO UPLOAD */
+.upload-zone{width:100%;padding:1.4rem;background:rgba(59,130,246,.05);border:1.5px dashed rgba(59,130,246,.35);
+  border-radius:12px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.upload-zone:hover{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.6)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz-icon{font-size:1.6rem;margin-bottom:.4rem}
+.uz-text{font-size:.78rem;color:var(--muted2);font-weight:400}
+.uz-sub{font-size:.65rem;color:var(--muted);margin-top:.2rem;font-family:'Space Mono',monospace;letter-spacing:1px}
+.photo-preview-wrap{display:none;position:relative}
+.photo-thumb{width:100%;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--gb2)}
+.photo-remove{position:absolute;top:.4rem;right:.4rem;background:rgba(5,8,18,.85);border:1px solid var(--gb);
+  color:var(--white);border-radius:6px;padding:.2rem .5rem;font-size:.7rem;cursor:pointer;transition:all .2s}
+.photo-remove:hover{background:rgba(239,68,68,.2);border-color:#ef4444;color:#f87171}
+.photo-detected{margin-top:.5rem;padding:.6rem .8rem;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);
+  border-radius:8px;font-size:.72rem;color:#4ade80;font-family:'Space Mono',monospace;letter-spacing:1px}
+
+/* GEN BOTTOM */
+.freebar{display:flex;align-items:center;gap:.8rem;padding:.65rem 1rem;
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;margin-bottom:1rem}
+.fdots{display:flex;gap:5px}
+.fdot{width:9px;height:9px;border-radius:50%;background:var(--blue2);box-shadow:0 0 8px var(--blue)}
+.fdot.used{background:rgba(255,255,255,.1);box-shadow:none}
+.ftxt{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;flex:1}
+.genbtn{width:100%;padding:1rem;background:var(--blue);color:var(--white);border:none;
+  border-radius:10px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;
+  cursor:pointer;transition:all .2s;box-shadow:0 0 24px var(--glow);margin-top:.5rem}
+.genbtn:hover:not(:disabled){background:var(--blue2);transform:translateY(-1px);box-shadow:0 0 40px var(--glow)}
+.genbtn:disabled{background:rgba(255,255,255,.06);color:var(--muted);cursor:not-allowed;box-shadow:none;transform:none}
+
+/* PREVIEW */
+.prevpanel{position:sticky;top:6rem}
+.prevcard{border-radius:20px;overflow:hidden;aspect-ratio:3/4;position:relative;
+  background:var(--glass);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center}
+.previdle{text-align:center;padding:2rem;color:var(--muted)}
+.previdle .ii{font-size:2.5rem;margin-bottom:1rem;opacity:.4}
+.previdle p{font-size:.85rem;line-height:1.7}
+.prevres{display:none;width:100%;height:100%;position:absolute;inset:0}
+/* background scene image */
+.prev-scene-img{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.7) saturate(1.2)}
+/* user photo composite */
+.prev-user-wrap{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:55%;z-index:3;display:flex;align-items:flex-end;justify-content:center}
+.prev-user-img{width:100%;object-fit:cover;object-position:top;
+  -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,1) 60%,rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to top,rgba(0,0,0,1) 60%,rgba(0,0,0,0) 100%);
+  filter:drop-shadow(0 0 20px rgba(0,0,0,.8))}
+.prev-no-user{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:50%;z-index:3;display:flex;align-items:flex-end;justify-content:center;
+  font-size:5rem;padding-bottom:2rem;filter:drop-shadow(0 0 30px rgba(59,130,246,.5))}
+.prevgrad-bot{position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to top,rgba(5,8,18,.95) 0%,rgba(5,8,18,.2) 40%,transparent 70%)}
+.prevwm{position:absolute;top:1rem;right:1rem;font-family:'Space Mono',monospace;font-size:.5rem;
+  color:rgba(59,130,246,.45);letter-spacing:2px;z-index:5}
+.previnfo{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:1.5rem}
+.prevtitle{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:1px;color:var(--white);line-height:1}
+.prevsub{font-size:.75rem;color:var(--muted2);margin-top:.25rem}
+.prevload{display:none;flex-direction:column;align-items:center;gap:1rem;position:absolute;
+  inset:0;background:rgba(5,8,18,.92);z-index:10;justify-content:center;border-radius:20px}
+.spinner{width:36px;height:36px;border:2px solid var(--gb);border-top-color:var(--blue);
+  border-radius:50%;animation:spin .8s linear infinite}
+.lmsg{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--blue2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.promptout{display:none;margin-top:1rem;padding:1rem;background:rgba(59,130,246,.06);
+  border:1px solid rgba(59,130,246,.2);border-radius:12px;font-size:.76rem;color:var(--muted2);line-height:1.75;
+  word-break:break-word}
+.promptout strong{color:var(--blue2);font-family:'Space Mono',monospace;font-size:.62rem;display:block;margin-bottom:.5rem}
+.promptout .pcopyrow{display:flex;gap:.5rem;margin-top:.8rem}
+.pcopy-all{flex:1;padding:.5rem;background:rgba(59,130,246,.15);border:1px solid var(--gb2);
+  color:var(--blue2);border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;
+  transition:all .2s;font-family:'Outfit',sans-serif}
+.pcopy-all:hover{background:rgba(59,130,246,.25)}
+.pcopy-all.cpd{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);color:#4ade80}
+
+/* PRICING */
+.pchdr{text-align:center;margin-bottom:3rem}
+.pchdr .ssub{margin:0 auto}
+.pcgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:900px;margin:0 auto}
+.prcard{padding:2rem;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--gb);
+  border-radius:20px;position:relative;transition:transform .2s}
+.prcard:hover{transform:translateY(-4px)}
+.prcard.feat{border-color:var(--blue);background:rgba(59,130,246,.08);box-shadow:0 0 40px rgba(59,130,246,.15)}
+.pfbadge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--blue);
+  color:var(--white);font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:2px;
+  padding:.3rem .9rem;border-radius:999px;text-transform:uppercase;white-space:nowrap}
+.ptier{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1rem}
+.pamt{font-family:'Bebas Neue',cursive;font-size:3.5rem;color:var(--white);line-height:1;letter-spacing:1px}
+.pamt sup{font-size:1.5rem;color:var(--muted2);vertical-align:super}
+.pamt sub{font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--muted);font-weight:300}
+.pdesc{font-size:.8rem;color:var(--muted);line-height:1.65;margin:.8rem 0 1.5rem;min-height:2.6rem;font-weight:300}
+.pfeat{list-style:none;margin-bottom:1.8rem}
+.pfeat li{font-size:.82rem;color:var(--muted2);padding:.5rem 0;border-bottom:1px solid var(--gb);
+  display:flex;align-items:center;gap:.6rem;font-weight:300}
+.pfeat li:last-child{border-bottom:none}
+.fi.y{color:var(--blue2)}.fi.n{color:rgba(255,255,255,.15)}
+.pbtn{width:100%;padding:.85rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;border-radius:10px;transition:all .2s}
+.pbtn.sol{background:var(--blue);color:var(--white);border:none;box-shadow:0 0 20px var(--glow)}
+.pbtn.sol:hover{background:var(--blue2)}
+.pbtn.out{background:transparent;color:var(--white);border:1px solid var(--gb)}
+.pbtn.out:hover{border-color:var(--blue2);background:rgba(59,130,246,.08)}
+
+/* FOOTER */
+footer{position:relative;z-index:10;background:rgba(5,8,18,.94);border-top:1px solid var(--gb);
+  padding:3rem 2rem;text-align:center;backdrop-filter:blur(20px)}
+.flogo{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:3px;color:var(--white);margin-bottom:1.2rem}
+.flogo .ac{color:var(--blue2)}
+.flinks{display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1.5rem;flex-wrap:wrap}
+.flinks a{color:var(--muted);text-decoration:none;font-size:.78rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s}
+.flinks a:hover{color:var(--blue2)}
+.ffine{font-size:.72rem;color:rgba(255,255,255,.2);line-height:1.7}
+
+/* MODALS */
+.mback{display:none;position:fixed;inset:0;background:rgba(5,8,18,.88);z-index:500;
+  align-items:center;justify-content:center;padding:2rem;backdrop-filter:blur(10px)}
+.mback.op{display:flex}
+.mbox{background:rgba(8,14,31,.97);border:1px solid var(--blue);border-radius:20px;padding:2.5rem;
+  max-width:440px;width:100%;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);animation:fup .3s ease}
+.micon{font-size:2.5rem;margin-bottom:1rem}
+.mbox h2{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:var(--blue2);letter-spacing:2px;margin-bottom:.5rem}
+.mbox p{color:var(--muted2);font-size:.88rem;line-height:1.7;margin-bottom:1.5rem;font-weight:300}
+.mclose{background:none;border:none;color:var(--muted);font-size:.72rem;cursor:pointer;
+  margin-top:1rem;text-decoration:underline;letter-spacing:1px;font-family:'Outfit',sans-serif}
+
+/* ACCOUNT MODAL form */
+.mform{display:flex;flex-direction:column;gap:.8rem;text-align:left}
+.mform input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--gb);
+  color:var(--white);padding:.75rem 1rem;font-size:.9rem;font-family:'Outfit',sans-serif;
+  border-radius:10px;outline:none}
+.mform input:focus{border-color:var(--blue)}
+.mform input::placeholder{color:var(--muted)}
+.or-divider{text-align:center;color:var(--muted);font-size:.75rem;margin:.2rem 0;font-family:'Space Mono',monospace;letter-spacing:2px}
+.account-note{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.5rem;line-height:1.6}
+
+@keyframes fup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(59,130,246,.3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--blue)}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.2rem}.navlinks{display:none}
+  .genwrap{grid-template-columns:1fr}.prevpanel{position:static}
+  .pcgrid{grid-template-columns:1fr}
+  section{padding:4rem 1.2rem}
+  .pgrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){.pgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<canvas id="cbg"></canvas>
+<div class="bgo"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">LARP<span class="ac">ify</span></a>
+  <ul class="navlinks">
+    <li><a href="#prompts">Prompts</a></li>
+    <li><a href="#generator">Generate</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#generator" class="ncta">Try Free</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hpill"><div class="pdot"></div>AI Luxury Scene Generator</div>
+  <h1 class="htitle">LIVE LIKE<br><span class="bl">YOU</span> <span class="ol">OWN IT</span></h1>
+  <p class="hsub">Upload your photo. Pick a scene. Get an AI prompt that puts YOU in a Lambo, penthouse, or private jet — paste it into Midjourney and go viral.</p>
+  <div class="hbtns">
+    <a href="#generator" class="bblu">⚡ Generate Free</a>
+    <a href="#prompts" class="bgls">Browse Prompts</a>
+  </div>
+  <p class="hnote">✦ every prompt free once · account required · <span class="hi">unlimited with pro</span></p>
+
+  <div class="citychips-row">
+    <div class="citychips-label">✦ click a city to explore</div>
+    <div class="citychips">
+      <div class="cc" data-city="dubai">📍 Dubai</div>
+      <div class="cc" data-city="la">📍 Los Angeles</div>
+      <div class="cc" data-city="miami">📍 Miami</div>
+      <div class="cc" data-city="monaco">📍 Monaco</div>
+      <div class="cc" data-city="tokyo">📍 Tokyo</div>
+      <div class="cc" data-city="maldives">📍 Maldives</div>
+      <div class="cc" data-city="santorini">📍 Santorini</div>
+      <div class="cc" data-city="nyc">📍 New York</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mqwrap">
+  <div class="mqtrack">
+    <span>LAMBORGHINI URUS</span><span class="sp"> ✦ </span>
+    <span>DUBAI PENTHOUSE</span><span class="sp"> ✦ </span>
+    <span>PRIVATE G550</span><span class="sp"> ✦ </span>
+    <span>ROLEX DAYTONA</span><span class="sp"> ✦ </span>
+    <span>MONACO YACHT</span><span class="sp"> ✦ </span>
+    <span>MALIBU MANSION</span><span class="sp"> ✦ </span>
+    <span>FERRARI SF90</span><span class="sp"> ✦ </span>
+    <span>BALI INFINITY POOL</span><span class="sp"> ✦ </span>
+    <span>TOKYO ROOFTOP</span><span class="sp"> ✦ </span>
+    <span>MIAMI BEACH HOUSE</span><span class="sp"> ✦ </span>
+    <span>LAMBORGHINI URUS</span><span class="sp"> ✦ </span>
+    <span>DUBAI PENTHOUSE</span><span class="sp"> ✦ </span>
+    <span>PRIVATE G550</span><span class="sp"> ✦ </span>
+    <span>ROLEX DAYTONA</span><span class="sp"> ✦ </span>
+    <span>MONACO YACHT</span><span class="sp"> ✦ </span>
+    <span>MALIBU MANSION</span><span class="sp"> ✦ </span>
+    <span>FERRARI SF90</span><span class="sp"> ✦ </span>
+    <span>BALI INFINITY POOL</span><span class="sp"> ✦ </span>
+    <span>TOKYO ROOFTOP</span><span class="sp"> ✦ </span>
+    <span>MIAMI BEACH HOUSE</span><span class="sp"> ✦ </span>
+  </div>
+</div>
+
+<!-- PROMPTS -->
+<section id="prompts">
+  <div class="ctr">
+    <div class="phdr">
+      <div class="slabel">Ready-to-Use Prompts</div>
+      <h2 class="stitle">COPY. PASTE.<br><span style="color:var(--blue2)">GO VIRAL.</span></h2>
+      <p class="ssub">Every prompt is free for your first use. Create an account to unlock it — then go unlimited with Pro.</p>
+    </div>
+    <div class="pfilter" id="fbar">
+      <button class="fbtn act" data-f="all">All</button>
+      <button class="fbtn" data-f="supercar">🏎️ Supercar</button>
+      <button class="fbtn" data-f="yacht">🛥️ Yacht</button>
+      <button class="fbtn" data-f="jet">✈️ Jet</button>
+      <button class="fbtn" data-f="penthouse">🏙️ Penthouse</button>
+      <button class="fbtn" data-f="watch">⌚ Watch</button>
+      <button class="fbtn" data-f="travel">🌴 Travel</button>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="seeal">
+      <a href="#pricing" class="bgls" style="margin-top:1.5rem">⚡ Go Unlimited with Pro</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="statbar">
+  <div class="statinner">
+    <div class="stat"><div class="snum">847K</div><div class="slbl">Prompts Copied</div></div>
+    <div class="stat"><div class="snum">2.3M</div><div class="slbl">TikTok Views Driven</div></div>
+    <div class="stat"><div class="snum">94K</div><div class="slbl">Active Creators</div></div>
+    <div class="stat"><div class="snum">4.9★</div><div class="slbl">Creator Rating</div></div>
+  </div>
+</div>
+
+<!-- GENERATOR -->
+<section id="generator">
+  <div class="ctr">
+    <div style="text-align:center;margin-bottom:2.5rem">
+      <div class="slabel">AI Scene Builder</div>
+      <h2 class="stitle">PUT <span style="color:var(--blue2)">YOURSELF</span> IN THE SCENE</h2>
+      <p class="ssub" style="margin:0 auto">Upload your photo, pick a lifestyle, get a prompt that puts YOU in it.</p>
+    </div>
+    <div class="genwrap">
+      <!-- LEFT PANEL -->
+      <div class="genpanel">
+
+        <!-- PHOTO UPLOAD -->
+        <div class="frow">
+          <label class="glabel">📸 Your Photo (optional but recommended)</label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="photo-input" accept="image/*">
+            <div class="uz-icon">📤</div>
+            <div class="uz-text">Drop your photo here or click to browse</div>
+            <div class="uz-sub">jpg / png / webp · stays on your device</div>
+          </div>
+          <div class="photo-preview-wrap" id="photo-preview-wrap">
+            <img class="photo-thumb" id="photo-thumb" src="" alt="Your photo">
+            <button class="photo-remove" id="photo-remove">✕ Remove</button>
+            <div class="photo-detected" id="photo-detected">✓ Photo ready — will be composited into your preview</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <label class="glabel">Your Name / Handle</label>
+          <input class="ginput" type="text" id="iname" placeholder="@yourhandle">
+        </div>
+
+        <div class="frow">
+          <label class="glabel">Choose a Style</label>
+          <div class="schips" id="schips">
+            <div class="schip act" data-s="Supercar"><span class="ci">🏎️</span>Supercar</div>
+            <div class="schip" data-s="Yacht"><span class="ci">🛥️</span>Yacht</div>
+            <div class="schip" data-s="Private Jet"><span class="ci">✈️</span>Private Jet</div>
+            <div class="schip" data-s="Penthouse"><span class="ci">🏙️</span>Penthouse</div>
+            <div class="schip" data-s="Luxury Watch"><span class="ci">⌚</span>Watch</div>
+            <div class="schip" data-s="Island Villa"><span class="ci">🌴</span>Island</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <label class="glabel">City / Location</label>
+          <input class="ginput" type="text" id="iloc" placeholder="Dubai, Miami, Tokyo, Monaco…">
+        </div>
+
+        <div class="frow">
+          <label class="glabel">Describe Yourself (helps the AI match you)</label>
+          <textarea class="gtextarea" id="idesc" placeholder="e.g. tall male, dark skin, curly hair, wearing all black… (optional, auto-detected from photo)"></textarea>
+        </div>
+
+        <div class="frow">
+          <label class="glabel">Extra Scene Details (optional)</label>
+          <textarea class="gtextarea" id="idet" placeholder="Specific car model, outfit, time of day, mood…"></textarea>
+        </div>
+
+        <div class="freebar">
+          <div class="fdots"><div class="fdot" id="d1"></div><div class="fdot" id="d2"></div></div>
+          <div class="ftxt" id="flbl">2 FREE GENERATIONS REMAINING</div>
+        </div>
+
+        <button class="genbtn" id="gbtn">⚡ Generate My Scene</button>
+        <div class="promptout" id="pout"></div>
+      </div>
+
+      <!-- RIGHT PANEL — PREVIEW -->
+      <div class="prevpanel">
+        <div class="prevcard" id="pcard">
+          <div class="previdle" id="pidle">
+            <div class="ii">✨</div>
+            <p>Upload your photo and choose a style — we'll composite you into a luxury scene and generate your AI prompt.</p>
+          </div>
+          <div class="prevres" id="pres">
+            <div class="prev-scene-img" id="prev-scene"></div>
+            <div class="prevgrad-bot"></div>
+            <div class="prev-no-user" id="prev-emoji-fallback">🏎️</div>
+            <div class="prev-user-wrap" id="prev-user-wrap" style="display:none">
+              <img class="prev-user-img" id="prev-user-img" src="" alt="">
+            </div>
+            <div class="prevwm">LARPIFY.AI</div>
+            <div class="previnfo">
+              <div class="prevtitle" id="ptitle">YOUR SCENE</div>
+              <div class="prevsub" id="psub">Generated with LARPify</div>
+            </div>
+          </div>
+          <div class="prevload" id="pload">
+            <div class="spinner"></div>
+            <div class="lmsg">BUILDING YOUR SCENE…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="ctr">
+    <div class="pchdr">
+      <div class="slabel">Plans & Pricing</div>
+      <h2 class="stitle">LEVEL <span style="color:var(--blue2)">UP</span></h2>
+      <p class="ssub">Every prompt free once. Go unlimited when you're ready.</p>
+    </div>
+    <div class="pcgrid">
+      <div class="prcard">
+        <div class="ptier">Free</div>
+        <div class="pamt"><sup>$</sup>0<sub>/mo</sub></div>
+        <p class="pdesc">Create an account and use every prompt once. No card needed.</p>
+        <ul class="pfeat">
+          <li><span class="fi y">✓</span> Every prompt — 1 use each</li>
+          <li><span class="fi y">✓</span> Photo upload & composite</li>
+          <li><span class="fi y">✓</span> 6 lifestyle styles</li>
+          <li><span class="fi n">✗</span> Repeat use of any prompt</li>
+          <li><span class="fi n">✗</span> TikTok caption AI</li>
+          <li><span class="fi n">✗</span> Remove watermark</li>
+        </ul>
+        <button class="pbtn out" onclick="openAccModal('free')">Create Free Account</button>
+      </div>
+      <div class="prcard feat">
+        <div class="pfbadge">Most Popular</div>
+        <div class="ptier">Creator Pro</div>
+        <div class="pamt"><sup>$</sup>12<sub>/mo</sub></div>
+        <p class="pdesc">Unlimited everything. For creators going viral every week.</p>
+        <ul class="pfeat">
+          <li><span class="fi y">✓</span> Unlimited prompt uses</li>
+          <li><span class="fi y">✓</span> 50+ lifestyle styles</li>
+          <li><span class="fi y">✓</span> Photo composite + AI describe</li>
+          <li><span class="fi y">✓</span> TikTok caption AI</li>
+          <li><span class="fi y">✓</span> No watermark</li>
+          <li><span class="fi y">✓</span> Custom locations</li>
+        </ul>
+        <button class="pbtn sol" onclick="openModal('upgrade')">Get Creator Pro →</button>
+      </div>
+      <div class="prcard">
+        <div class="ptier">Agency</div>
+        <div class="pamt"><sup>$</sup>49<sub>/mo</sub></div>
+        <p class="pdesc">Teams running multiple creator accounts at scale.</p>
+        <ul class="pfeat">
+          <li><span class="fi y">✓</span> Everything in Pro</li>
+          <li><span class="fi y">✓</span> 5 team seats</li>
+          <li><span class="fi y">✓</span> Custom branding</li>
+          <li><span class="fi y">✓</span> Priority support</li>
+          <li><span class="fi y">✓</span> API access</li>
+          <li><span class="fi y">✓</span> Bulk generation</li>
+        </ul>
+        <button class="pbtn out" onclick="openModal('upgrade')">Get Agency</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flogo">LARP<span class="ac">ify</span></div>
+  <ul class="flinks">
+    <li><a href="#">About</a></li><li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li><li><a href="#">TikTok</a></li><li><a href="#">Twitter</a></li>
+  </ul>
+  <p class="ffine">© 2026 LARPify · For entertainment & creative purposes only · Content generated by AI<br>Not affiliated with any automotive, real estate, aviation or luxury brand.</p>
+</footer>
+
+<!-- UPGRADE MODAL -->
+<div class="mback" id="modal-upgrade">
+  <div class="mbox">
+    <div class="micon">⚡</div>
+    <h2>GO UNLIMITED</h2>
+    <p>You've used this prompt before. Upgrade to Creator Pro for unlimited uses of every prompt, TikTok caption AI, and no watermark.</p>
+    <button class="bblu" style="width:100%;justify-content:center;font-size:1rem" onclick="closeModal('upgrade')">Get Creator Pro — $12/mo →</button>
+    <br><button class="mclose" onclick="closeModal('upgrade')">maybe later</button>
+  </div>
+</div>
+
+<!-- ACCOUNT MODAL -->
+<div class="mback" id="modal-account">
+  <div class="mbox">
+    <div class="micon">🔑</div>
+    <h2>FREE ACCOUNT</h2>
+    <p>Create a free account to unlock every prompt once. No credit card needed.</p>
+    <div class="mform">
+      <input type="email" placeholder="your@email.com">
+      <input type="password" placeholder="Password">
+      <button class="bblu" style="width:100%;justify-content:center" onclick="fakeSignup()">Create Account & Unlock →</button>
+      <div class="or-divider">— or —</div>
+      <button class="bgls" style="width:100%;justify-content:center" onclick="fakeSignup()">Continue with Google</button>
+    </div>
+    <p class="account-note">Already have an account? <span style="color:var(--blue2);cursor:pointer" onclick="fakeSignup()">Sign in</span></p>
+    <br><button class="mclose" onclick="closeModal('account')">maybe later</button>
+  </div>
+</div>
+
+<!-- GEN LIMIT MODAL -->
+<div class="mback" id="modal-genlimit">
+  <div class="mbox">
+    <div class="micon">🔒</div>
+    <h2>SCENE LIMIT REACHED</h2>
+    <p>You've used your free scene generations. Upgrade to Creator Pro for unlimited AI scene building, photo compositing, and TikTok caption AI.</p>
+    <button class="bblu" style="width:100%;justify-content:center;font-size:1rem" onclick="closeModal('genlimit')">Get Creator Pro — $12/mo →</button>
+    <br><button class="mclose" onclick="closeModal('genlimit')">maybe later</button>
+  </div>
+</div>
+
+<!-- CITY POPUP -->
+<div class="city-popup-backdrop" id="city-popup-backdrop">
+  <div class="city-popup" id="city-popup">
+    <div class="cpu-header">
+      <div>
+        <div class="cpu-name" id="cpu-name">DUBAI</div>
+        <div class="cpu-sub" id="cpu-sub">United Arab Emirates · luxury capital of the world</div>
+      </div>
+      <button class="cpu-close" onclick="closeCityPopup()">✕</button>
+    </div>
+    <div class="cpu-photos" id="cpu-photos"></div>
+    <div class="cpu-footer">
+      <div class="cpu-hint">Click any photo to <strong>auto-fill this city</strong> in the generator</div>
+      <a href="#generator" class="bblu" style="font-size:.8rem;padding:.5rem 1.1rem" onclick="closeCityPopup()">Generate Here →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CITY CANVAS ──
+(function(){
+  const cv=document.getElementById('cbg'),cx=cv.getContext('2d');
+  let W,H,stars=[],blds=[];
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;mkS();mkB();}
+  function mkS(){stars=[];for(let i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H*.55,r:Math.random()*1.2+.2,a:Math.random()*Math.PI*2,sp:Math.random()*.008+.002});}
+  function mkB(){
+    blds=[];let x=-20;
+    while(x<W+130){
+      const w=Math.random()*75+18,h=Math.random()*H*.48+H*.08,wins=[];
+      const fc=Math.floor(w/11),fr=Math.floor(h/13);
+      for(let r=0;r<fr;r++)for(let c=0;c<fc;c++)
+        if(Math.random()>.32)wins.push({c,r,on:Math.random()>.25,blink:Math.random()>.93,bt:Math.random()*400});
+      blds.push({x,w,h,wins});x+=w+Math.random()*10+2;
+    }
+  }
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    const sk=cx.createLinearGradient(0,0,0,H);
+    sk.addColorStop(0,'#010308');sk.addColorStop(.7,'#050812');sk.addColorStop(1,'#08101f');
+    cx.fillStyle=sk;cx.fillRect(0,0,W,H);
+    stars.forEach(s=>{s.a+=s.sp;const al=(Math.sin(s.a)*.4+.6)*.75;cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(200,220,255,${al})`;cx.fill();});
+    const hg=cx.createLinearGradient(0,H*.55,0,H);hg.addColorStop(0,'transparent');hg.addColorStop(1,'rgba(29,78,216,.08)');cx.fillStyle=hg;cx.fillRect(0,H*.55,W,H*.45);
+    blds.forEach(b=>{
+      const by=H-b.h;
+      cx.fillStyle='rgba(4,8,20,.98)';cx.fillRect(b.x,by,b.w,b.h);
+      cx.strokeStyle='rgba(59,130,246,.05)';cx.lineWidth=.5;cx.strokeRect(b.x,by,b.w,b.h);
+      b.wins.forEach(w=>{
+        if(w.blink){w.bt--;if(w.bt<=0){w.on=!w.on;w.bt=Math.random()*500+80;}}
+        if(!w.on)return;
+        cx.fillStyle=Math.random()>.65?'rgba(255,200,100,.5)':'rgba(140,190,255,.4)';
+        cx.fillRect(b.x+w.c*11+2,by+b.h-(w.r+1)*13+2,7,8);
+      });
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);resize();draw();
+})();
+
+// ── PROMPT DATA ──
+// Using Unsplash source images for real lifestyle visuals
+const PD=[
+  {id:1,cat:'supercar',tag:'Supercar',loc:'Dubai, UAE',title:'LAMBO IN DUBAI',
+   img:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
+   txt:'Photorealistic [PERSON] standing beside a matte black Lamborghini Huracán STO on Sheikh Zayed Road, Dubai at golden hour. Low angle shot, heat shimmer rising from hood, Dubai skyline blurred bokeh behind. Shot on Sony A7R V, 24mm f/1.8. Cinematic grade, 8K hyperreal detail. --ar 4:5 --style raw --iw 2',
+   works:'Midjourney / Flux',copies:'12.4K'},
+  {id:2,cat:'yacht',tag:'Yacht',loc:'Monaco',title:'MONACO SUNDOWN',
+   img:'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=600&q=80',
+   txt:'Photorealistic [PERSON] on the aft deck of a 90ft Sunseeker Predator anchored off Monaco at golden hour sunset. Orange-pink sky reflected on glassy Mediterranean water, person relaxed in linen outfit. Drone 30° overhead angle. Cinematic editorial, 8K. --ar 4:5 --style raw --iw 2',
+   works:'Midjourney / DALL-E 3',copies:'9.1K'},
+  {id:3,cat:'jet',tag:'Private Jet',loc:'At altitude',title:'G550 INTERIOR',
+   img:'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=600&q=80',
+   txt:'Photorealistic [PERSON] seated in cream quilted leather chair aboard a Gulfstream G550 private jet interior. Champagne flute in hand, burl walnut tables, blue sky through oval windows. Warm ambient cabin lighting. Shot on Leica Q3, shallow DOF. Luxury editorial. --ar 4:5 --style raw --iw 2',
+   works:'Flux / Midjourney',copies:'7.8K'},
+  {id:4,cat:'penthouse',tag:'Penthouse',loc:'Manhattan, NYC',title:'NYC SKYLINE SUITE',
+   img:'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&q=80',
+   txt:'Photorealistic [PERSON] silhouetted at floor-to-ceiling glass windows of a Manhattan penthouse. NYC skyline glittering at blue hour, warm interior lighting behind, designer furniture. Architectural Digest editorial style. --ar 4:5 --style raw --iw 2',
+   works:'DALL-E 3 / Flux',copies:'6.3K'},
+  {id:5,cat:'watch',tag:'Luxury Watch',loc:'Mediterranean',title:'AP ROYAL OAK WRIST',
+   img:'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80',
+   txt:'Ultra-macro photorealistic wrist shot of an Audemars Piguet Royal Oak 15202 on [PERSON]\'s wrist, shot on yacht deck with Mediterranean natural light. 100mm macro lens, sharp octagonal bezel detail, bokeh sea background. Luxury watch editorial, 8K. --ar 4:5 --iw 2',
+   works:'Midjourney',copies:'5.7K'},
+  {id:6,cat:'travel',tag:'Island Villa',loc:'Maldives',title:'MALDIVES OVERWATER',
+   img:'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80',
+   txt:'Aerial drone photo of [PERSON] relaxing on an overwater bungalow villa in the Maldives at dawn. Crystal turquoise lagoon below, white sand visible through glass floor panels, hammock over water. Soft morning light, travel magazine cover style. --ar 4:5 --style raw --iw 2',
+   works:'Flux Dev / Midjourney',copies:'8.9K'},
+  {id:7,cat:'supercar',tag:'Supercar',loc:'Tokyo, Japan',title:'FERRARI RAIN TOKYO',
+   img:'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80',
+   txt:'Cinematic photo of [PERSON] leaning on a red Ferrari SF90 on a wet Tokyo highway at night. Neon kanji signs reflected in tarmac puddles, motion blur on tyres, anamorphic lens flare. ARRI Alexa, f/2.0. --ar 4:5 --style raw --iw 2',
+   works:'Midjourney',copies:'10.2K'},
+  {id:8,cat:'penthouse',tag:'Penthouse',loc:'Dubai, UAE',title:'BURJ KHALIFA VIEW',
+   img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80',
+   txt:'Photorealistic [PERSON] in ultra-luxury penthouse directly facing Burj Khalifa from the 60th floor at dusk. Infinity-edge interior pool merging visually with Dubai skyline, white travertine, custom chandelier. Wide angle, golden ratio composition. --ar 4:5 --iw 2',
+   works:'DALL-E 3 / Flux',copies:'11.1K'},
+  {id:9,cat:'yacht',tag:'Yacht',loc:'Amalfi Coast',title:'AMALFI COAST CRUISE',
+   img:'https://images.unsplash.com/photo-1533777168723-3b4e5e5e7a7f?w=600&q=80',
+   txt:'Photorealistic [PERSON] on the bow of a 65ft Princess yacht cruising the Amalfi Coast, Italy. Pastel cliffside villages, turquoise water, person in white dress, golden hour. Mediterranean colour grade. --ar 4:5 --style raw --iw 2',
+   works:'Flux / Midjourney',copies:'7.3K'},
+  {id:10,cat:'travel',tag:'Travel',loc:'Miami, FL',title:'MIAMI SUNRISE MANSION',
+   img:'https://images.unsplash.com/photo-1533587851505-d119e13c8f90?w=600&q=80',
+   txt:'Aerial photo of [PERSON] at the pool of a waterfront mega-mansion in Miami Beach at sunrise. Pink-orange sky reflected in infinity pool, Rolls-Royce in circular driveway, palm trees. Drone wide-angle, golden light. --ar 4:5 --iw 2',
+   works:'Flux / DALL-E 3',copies:'6.8K'},
+  {id:11,cat:'supercar',tag:'Supercar',loc:'Los Angeles, CA',title:'LAMBO SUNSET LA',
+   img:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80',
+   txt:'Cinematic photo of [PERSON] beside an orange Lamborghini Aventador SVJ on Mulholland Drive at sunset. LA city sprawl glittering below, golden hour lens flare, low angle rear shot. RED Monstro camera, cinematic grade. --ar 4:5 --style raw --iw 2',
+   works:'Midjourney',copies:'9.4K'},
+  {id:12,cat:'penthouse',tag:'Penthouse',loc:'Santorini, Greece',title:'SANTORINI BLUE DOME',
+   img:'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80',
+   txt:'Photorealistic [PERSON] at a cliffside villa in Santorini with iconic blue-domed chapel, private infinity pool overlooking the caldera, whitewashed walls. Sunset, Aegean Sea backdrop. Luxury real estate editorial. --ar 4:5 --iw 2',
+   works:'DALL-E 3',copies:'5.5K'},
+];
+
+// track which prompts the user has "used" (in real app this is server-side)
+const usedPrompts=new Set();
+// track if account created (simulated)
+let hasAccount=false;
+
+function personToken(photoDesc){
+  return photoDesc||'a person';
+}
+
+function renderCards(){
+  const g=document.getElementById('pgrid');
+  const list=activeFilter==='all'?PD:PD.filter(p=>p.cat===activeFilter);
+  g.innerHTML=list.map(p=>{
+    const alreadyUsed=usedPrompts.has(p.id);
+    return `
+    <div class="pcard">
+      <div class="pcimg" style="background-image:url('${p.img}')"></div>
+      <div class="pcgrad"></div>
+      <div class="pcbody">
+        <div class="pcbadges">
+          <span class="badge bblue">${p.tag}</span>
+          ${alreadyUsed
+            ? '<span class="badge bused">Used ✓</span>'
+            : '<span class="badge bfree">1 Free Use</span>'}
+        </div>
+        <div class="pctitle">${p.title}</div>
+        <div class="pcloc">📍 ${p.loc}</div>
+        <div class="pctext">${p.txt.replace(/\[PERSON\]/g,'you')}</div>
+        <div class="pcactions">
+          ${alreadyUsed
+            ? `<button class="copybtn used-state" onclick="openModal('upgrade')">🔒 Upgrade to Reuse</button>`
+            : `<button class="copybtn" id="cb${p.id}" onclick="handlePromptUse(event,${p.id})">📋 Copy Prompt (Free)</button>`
+          }
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function handlePromptUse(e,id){
+  e.stopPropagation();
+  if(!hasAccount){
+    pendingPromptId=id;
+    openAccModal('prompt');
+    return;
+  }
+  doCopy(id);
+}
+
+let pendingPromptId=null;
+
+function doCopy(id){
+  const p=PD.find(x=>x.id===id);
+  if(!p) return;
+  // replace [PERSON] with user's uploaded photo reference + description
+  let finalTxt=p.txt;
+  const desc=document.getElementById('idesc').value.trim();
+  const personDesc=desc?`a person (${desc})`:'the person in the reference photo';
+  finalTxt=finalTxt.replace(/\[PERSON\]/g,personDesc);
+
+  copyToClipboard(finalTxt);
+  usedPrompts.add(id);
+
+  const btn=document.getElementById('cb'+id);
+  if(btn){btn.textContent='✅ Copied!';btn.classList.add('cpd');
+    setTimeout(()=>renderCards(),2000);}
+}
+
+function copyToClipboard(txt){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).catch(()=>fbCopy(txt));
+  } else fbCopy(txt);
+}
+function fbCopy(txt){
+  const ta=document.createElement('textarea');
+  ta.value=txt;ta.style.cssText='position:fixed;top:-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+
+let activeFilter='all';
+document.getElementById('fbar').addEventListener('click',function(e){
+  const b=e.target.closest('.fbtn');if(!b)return;
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('act'));
+  b.classList.add('act');activeFilter=b.dataset.f;renderCards();
+});
+renderCards();
+
+// ── PHOTO UPLOAD ──
+let userPhotoDataUrl=null;
+
+document.getElementById('photo-input').addEventListener('change',function(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    userPhotoDataUrl=ev.target.result;
+    document.getElementById('upload-zone').style.display='none';
+    const pw=document.getElementById('photo-preview-wrap');
+    pw.style.display='block';
+    document.getElementById('photo-thumb').src=userPhotoDataUrl;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('photo-remove').addEventListener('click',function(){
+  userPhotoDataUrl=null;
+  document.getElementById('photo-input').value='';
+  document.getElementById('upload-zone').style.display='block';
+  document.getElementById('photo-preview-wrap').style.display='none';
+  document.getElementById('prev-user-wrap').style.display='none';
+  document.getElementById('prev-emoji-fallback').style.display='flex';
+});
+
+// ── STYLE CHIPS ──
+let selStyle='Supercar';
+document.getElementById('schips').addEventListener('click',function(e){
+  const c=e.target.closest('.schip');if(!c)return;
+  document.querySelectorAll('.schip').forEach(x=>x.classList.remove('act'));
+  c.classList.add('act');selStyle=c.dataset.s;
+});
+
+// ── SCENE DATA for generator preview ──
+const SD={
+  'Supercar':{emoji:'🏎️',sceneImg:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80',
+    titles:['FERRARI SF90 SPIDER','LAMBORGHINI HURACÁN STO','MCLAREN 750S','BUGATTI CHIRON SS']},
+  'Yacht':{emoji:'🛥️',sceneImg:'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80',
+    titles:['SUNSEEKER 95 PREDATOR','PRINCESS 85 MOTOR','AZIMUT GRANDE 35M','BENETTI MOTOPANFILO']},
+  'Private Jet':{emoji:'✈️',sceneImg:'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&q=80',
+    titles:['GULFSTREAM G550','BOMBARDIER GLOBAL 7500','DASSAULT FALCON 8X','CESSNA CITATION X+']},
+  'Penthouse':{emoji:'🏙️',sceneImg:'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80',
+    titles:['BURJ KHALIFA 140F','MANHATTAN SKYLINE SUITE','MONACO CROWN PENTHOUSE','ONE HYDE PARK']},
+  'Luxury Watch':{emoji:'⌚',sceneImg:'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800&q=80',
+    titles:['PATEK PHILIPPE NAUTILUS','AP ROYAL OAK OFFSHORE','ROLEX DAYTONA PLATINUM','RICHARD MILLE RM 11-03']},
+  'Island Villa':{emoji:'🌴',sceneImg:'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80',
+    titles:['MALDIVES OVERWATER VILLA','BALI INFINITY ESTATE','ST BARTS HILLTOP RETREAT','SANTORINI CLIFFSIDE SUITE']},
+};
+
+const PT={
+  'Supercar':(n,l,d,det,t)=>`Photorealistic image of ${d||'a person'} standing beside a ${t} in ${l||'Dubai'}. ${n?'Handle: '+n+'.':''} Low angle, golden hour, heat shimmer on hood, city skyline bokeh. Sony A7R V, 24mm f/1.8. Cinematic 8K. Use reference photo for face likeness. --ar 4:5 --style raw --iw 2${det?' '+det:''}`,
+  'Yacht':(n,l,d,det,t)=>`Photorealistic image of ${d||'a person'} on the aft deck of a ${t} anchored off ${l||'Monaco'} at golden hour. Orange-pink sky reflection on glassy water. ${n||''} Cinematic editorial 8K. Use reference for face. --ar 4:5 --style raw --iw 2${det?' '+det:''}`,
+  'Private Jet':(n,l,d,det,t)=>`Photorealistic interior of a ${t}. ${d||'A person'} ${n?'('+n+')':''} seated in cream leather, champagne flute in hand, burl walnut tables, blue sky oval windows. Leica Q3 shallow DOF. Use reference for face. --ar 4:5 --iw 2${det?' '+det:''}`,
+  'Penthouse':(n,l,d,det,t)=>`Photorealistic luxury penthouse — ${t} in ${l||'Manhattan'}. ${d||'A person'} ${n?'('+n+')':''} silhouetted at floor-to-ceiling glass, city skyline at blue hour, warm moody interior. Architectural Digest. --ar 4:5 --iw 2${det?' '+det:''}`,
+  'Luxury Watch':(n,l,d,det,t)=>`Ultra-macro photorealistic wrist shot: ${t} on the wrist of ${d||'a person'} ${n?'('+n+')':''} on a yacht deck in ${l||'Monaco'}. 100mm macro, natural Mediterranean light, bokeh sea. Luxury editorial 8K. --ar 4:5 --iw 2${det?' '+det:''}`,
+  'Island Villa':(n,l,d,det,t)=>`Aerial drone photo of ${d||'a person'} ${n?'('+n+')':''} relaxing at a ${t} in ${l||'the Maldives'} at dawn. Turquoise lagoon, glass floor panels, hammock over water. Travel magazine cover. --ar 4:5 --iw 2${det?' '+det:''}`,
+};
+
+let genLeft=2;
+function updFree(){
+  document.getElementById('d1').classList.toggle('used',genLeft<1);
+  document.getElementById('d2').classList.toggle('used',genLeft<2);
+  const m={2:'2 FREE GENERATIONS REMAINING',1:'1 FREE GENERATION REMAINING',0:'UPGRADE FOR MORE'};
+  document.getElementById('flbl').textContent=m[genLeft]||m[0];
+  document.getElementById('gbtn').disabled=genLeft<=0;
+}
+
+const API_URL='https://larpify-api.vercel.app/api/generate';
+
+document.getElementById('gbtn').addEventListener('click',async function(){
+  if(genLeft<=0){openModal('genlimit');return;}
+
+  const n=document.getElementById('iname').value.trim();
+  const l=document.getElementById('iloc').value.trim();
+  const d=document.getElementById('idesc').value.trim();
+  const det=document.getElementById('idet').value.trim();
+  const s=SD[selStyle];
+  const title=s.titles[Math.floor(Math.random()*s.titles.length)];
+  const personDesc=d?`a person (${d})`:(userPhotoDataUrl?'the person in the uploaded reference photo':'a stylish person');
+
+  // show loading
+  document.getElementById('pidle').style.display='none';
+  document.getElementById('pres').style.display='none';
+  const ld=document.getElementById('pload');
+  ld.style.display='flex';
+  ld.querySelector('.lmsg').textContent='GENERATING YOUR SCENE…';
+
+  const prompt=PT[selStyle](n,l,personDesc,det,title);
+
+  try {
+    // call our Vercel API
+    const resp=await fetch(API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        prompt,
+        imageUrl: userPhotoDataUrl || null
+      })
+    });
+
+    const data=await resp.json();
+
+    ld.style.display='none';
+
+    if(data.imageUrl){
+      // show REAL generated image
+      const res=document.getElementById('pres');
+      res.style.display='block';
+      // use the AI generated image as the scene background
+      document.getElementById('prev-scene').style.backgroundImage=`url('${data.imageUrl}')`;
+      document.getElementById('prev-scene').style.filter='brightness(1) saturate(1)';
+      // hide user photo overlay — it's baked into the AI image now
+      document.getElementById('prev-user-wrap').style.display='none';
+      document.getElementById('prev-emoji-fallback').style.display='none';
+      document.getElementById('ptitle').textContent=title;
+      document.getElementById('psub').textContent=(l?l+' · ':'')+'Generated'+(n?' for '+n:'');
+    } else {
+      // API worked but no image returned — show error in preview
+      throw new Error(data.error||'No image returned');
+    }
+
+    // always show the prompt text below for copying into other tools
+    const photoRef=userPhotoDataUrl?'\n\n📎 Also paste your photo as the first image in Midjourney with --iw 2 for better face likeness.':'';
+    const out=document.getElementById('pout');
+    out.style.display='block';
+    out.innerHTML=`<strong>YOUR AI PROMPT (also works in Midjourney / Flux):</strong>${escHtml(prompt)}${photoRef?`<br><br><em style="color:var(--blue2);font-family:'Space Mono',monospace;font-size:.62rem">${escHtml(photoRef)}</em>`:''}
+<div class="pcopyrow">
+  <button class="pcopy-all" id="pcopy-btn" onclick="copyGenPrompt(${JSON.stringify(prompt+photoRef)})">📋 Copy Prompt</button>
+</div>`;
+
+    genLeft--;updFree();
+    if(genLeft===0)setTimeout(()=>openModal('genlimit'),3500);
+
+  } catch(err){
+    ld.style.display='none';
+    document.getElementById('pidle').style.display='block';
+    // show error message in the preview area
+    document.getElementById('pidle').innerHTML=`
+      <div class="ii">⚠️</div>
+      <p style="color:#f87171">Generation failed:<br>${err.message}</p>
+      <p style="margin-top:.8rem;font-size:.75rem">Check your FAL_KEY in Vercel environment variables.</p>
+    `;
+  }
+});
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function copyGenPrompt(txt){
+  copyToClipboard(txt);
+  const btn=document.getElementById('pcopy-btn');
+  if(!btn)return;
+  btn.textContent='✅ Copied!';btn.classList.add('cpd');
+  setTimeout(()=>{btn.textContent='📋 Copy Full Prompt';btn.classList.remove('cpd');},2000);
+}
+
+// ── MODALS ──
+function openModal(type){document.getElementById('modal-'+type).classList.add('op');}
+function closeModal(type){document.getElementById('modal-'+type).classList.remove('op');}
+function openAccModal(ctx){
+  pendingPromptId=ctx==='prompt'?pendingPromptId:null;
+  openModal('account');
+}
+function fakeSignup(){
+  hasAccount=true;
+  closeModal('account');
+  // if there was a pending prompt copy
+  if(pendingPromptId!==null){
+    doCopy(pendingPromptId);
+    pendingPromptId=null;
+  }
+}
+
+// close modals on backdrop click
+['modal-upgrade','modal-account','modal-genlimit'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this)this.classList.remove('op');
+  });
+});
+
+updFree();
+
+// ── CITY POPUP ──
+const CITIES={
+  dubai:{name:'DUBAI',sub:'United Arab Emirates · luxury capital of the world',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&q=80',label:'Burj Khalifa'},
+      {url:'https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=500&q=80',label:'Marina Skyline'},
+      {url:'https://images.unsplash.com/photo-1551776235-dde6d482980b?w=500&q=80',label:'Palm Jumeirah'},
+      {url:'https://images.unsplash.com/photo-1526495124232-a04e1849168c?w=500&q=80',label:'Night Skyline'},
+      {url:'https://images.unsplash.com/photo-1617501831950-56f2bf3c09f7?w=500&q=80',label:'Desert Dunes'},
+      {url:'https://images.unsplash.com/photo-1546412414-8035e1776c9a?w=500&q=80',label:'Gold Market'},
+    ]},
+  la:{name:'LOS ANGELES',sub:'California, USA · Lambos on Mulholland',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=500&q=80',label:'Hollywood Sign'},
+      {url:'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=500&q=80',label:'Sunset Strip'},
+      {url:'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=500&q=80',label:'Beverly Hills'},
+      {url:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80',label:'Malibu Beach'},
+      {url:'https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=500&q=80',label:'DTLA Skyline'},
+      {url:'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=500&q=80',label:'Supercar Culture'},
+    ]},
+  miami:{name:'MIAMI',sub:'Florida, USA · art deco, yachts & ocean drives',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1533587851505-d119e13c8f90?w=500&q=80',label:'South Beach'},
+      {url:'https://images.unsplash.com/photo-1570047826762-5e9afdeb08e8?w=500&q=80',label:'Brickell Skyline'},
+      {url:'https://images.unsplash.com/photo-1603145733146-ae562a55031e?w=500&q=80',label:'Ocean Drive'},
+      {url:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=500&q=80',label:'Yacht Life'},
+      {url:'https://images.unsplash.com/photo-1501083571660-6e7fb833c23e?w=500&q=80',label:'Sunset Bay'},
+      {url:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&q=80',label:'Beach Club'},
+    ]},
+  monaco:{name:'MONACO',sub:'French Riviera · F1, yachts & old money',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1490644658840-3f2e3f8c5625?w=500&q=80',label:'Port Hercule'},
+      {url:'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=500&q=80',label:'Yacht Club'},
+      {url:'https://images.unsplash.com/photo-1508002366005-75a695ee2d17?w=500&q=80',label:'Grand Prix Circuit'},
+      {url:'https://images.unsplash.com/photo-1542296332-2e4473faf563?w=500&q=80',label:'Casino Square'},
+      {url:'https://images.unsplash.com/photo-1604999565976-8913ad2ddb37?w=500&q=80',label:'Coastline'},
+      {url:'https://images.unsplash.com/photo-1520466809213-7b9a56adcd45?w=500&q=80',label:'Palace'},
+    ]},
+  tokyo:{name:'TOKYO',sub:'Japan · neon nights & hypercar culture',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=500&q=80',label:'Shinjuku Night'},
+      {url:'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=500&q=80',label:'Shibuya Crossing'},
+      {url:'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&q=80',label:'Supercar Street'},
+      {url:'https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?w=500&q=80',label:'Tokyo Tower'},
+      {url:'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=500&q=80',label:'Akihabara Neon'},
+      {url:'https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=500&q=80',label:'Mt Fuji View'},
+    ]},
+  maldives:{name:'MALDIVES',sub:'Indian Ocean · overwater villas & crystal lagoons',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=500&q=80',label:'Overwater Villa'},
+      {url:'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=500&q=80',label:'Turquoise Lagoon'},
+      {url:'https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=500&q=80',label:'Aerial Atoll'},
+      {url:'https://images.unsplash.com/photo-1586861203927-800a5acdcc4d?w=500&q=80',label:'Ocean Sunset'},
+      {url:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&q=80',label:'White Sand'},
+      {url:'https://images.unsplash.com/photo-1602002418082-a4443978a4dc?w=500&q=80',label:'Coral Reef'},
+    ]},
+  santorini:{name:'SANTORINI',sub:'Greece · blue domes & caldera sunsets',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=500&q=80',label:'Blue Domes'},
+      {url:'https://images.unsplash.com/photo-1539634928571-9d58b34c7e3b?w=500&q=80',label:'Oia Sunset'},
+      {url:'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=500&q=80',label:'Cliffside View'},
+      {url:'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=500&q=80',label:'Infinity Pool'},
+      {url:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=500&q=80',label:'White Village'},
+      {url:'https://images.unsplash.com/photo-1580396669850-9b69911d9173?w=500&q=80',label:'Aegean Sea'},
+    ]},
+  nyc:{name:'NEW YORK',sub:'USA · penthouses, power & the skyline',
+    photos:[
+      {url:'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=500&q=80',label:'Manhattan'},
+      {url:'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=500&q=80',label:'Penthouse View'},
+      {url:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=500&q=80',label:'Brooklyn Bridge'},
+      {url:'https://images.unsplash.com/photo-1555109307-f7d9da25c244?w=500&q=80',label:'Times Square'},
+      {url:'https://images.unsplash.com/photo-1522083165195-3424ed129620?w=500&q=80',label:'Central Park'},
+      {url:'https://images.unsplash.com/photo-1473091534298-04dcbce3278c?w=500&q=80',label:'Wall Street'},
+    ]},
+};
+
+function openCityPopup(key){
+  const c=CITIES[key];if(!c)return;
+  document.getElementById('cpu-name').textContent=c.name;
+  document.getElementById('cpu-sub').textContent=c.sub;
+  document.getElementById('cpu-photos').innerHTML=c.photos.map(p=>`
+    <div class="cpu-photo" style="background-image:url('${p.url}')"
+      onclick="selectCity('${c.name}');closeCityPopup()">
+      <div class="cpu-use"><span>${p.label}</span></div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.cc').forEach(el=>el.classList.toggle('active-city',el.dataset.city===key));
+  document.getElementById('city-popup-backdrop').classList.add('op');
+  document.body.style.overflow='hidden';
+}
+function closeCityPopup(){
+  document.getElementById('city-popup-backdrop').classList.remove('op');
+  document.body.style.overflow='';
+  document.querySelectorAll('.cc').forEach(el=>el.classList.remove('active-city'));
+}
+function selectCity(name){
+  const inp=document.getElementById('iloc');
+  if(inp){inp.value=name;}
+}
+document.getElementById('city-popup-backdrop').addEventListener('click',function(e){
+  if(e.target===this)closeCityPopup();
+});
+document.querySelectorAll('.cc[data-city]').forEach(el=>{
+  el.addEventListener('click',()=>openCityPopup(el.dataset.city));
+});
+</script>
+</body>
+</html>
